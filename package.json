@@ -1,0 +1,40 @@
+{
+  "name": "project-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./server/app.js",
+  "scripts": {
+    "build": "babel ./client --out-file ./hosted/bundle.js",
+    "watch": "babel --watch ./client --out-file ./hosted/bundle.js",
+    "nodemon": "nodemon --watch ./server --watch ./hosted ./server/app.js",
+    "start": "node ./server/app.js",
+    "pretest": "eslint ./server --fix",
+    "test": "echo \"Tests complete\"",
+    "dev": "concurrently --kill-others-on-fail \"sass --watch hosted/style.scss hosted/style.css\" \"npm run watch\" \"npm run nodemon\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BenThorn/kanji-cards.git"
+  },
+  "author": "Ben Thorn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BenThorn/kanji-cards/issues"
+  },
+  "homepage": "https://github.com/BenThorn/kanji-cards#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "concurrently": "^4.0.1",
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.18.4"
+  },
+  "dependencies": {
+    "fetch": "^1.1.0",
+    "get-json": "^1.0.1",
+    "jQuery": "^1.7.4",
+    "jquery": "^3.3.1"
+  }
+}
