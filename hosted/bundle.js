@@ -365,6 +365,7 @@ var requestAddDeck = function requestAddDeck(e, nameForm) {
   return false;
 };
 
+// Post request to save a card to a specified deck
 var requestAddCard = function requestAddCard(e, id, data) {
   var url = '/addCard';
   var method = 'post';

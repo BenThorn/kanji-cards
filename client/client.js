@@ -351,6 +351,7 @@ const requestAddDeck = (e, nameForm) => {
   return false;
 };
 
+// Post request to save a card to a specified deck
 const requestAddCard = (e, id, data) => {
   const url = '/addCard';
   const method = 'post';
@@ -368,8 +369,6 @@ const requestAddCard = (e, id, data) => {
   const params = `id=${id}&kanji=${encodedKanji}&kana=${encodedKana}&english=${data.english}`;
 
   xhr.send(params);
-
-
 
   e.preventDefault();
   return false;

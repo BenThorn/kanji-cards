@@ -7,6 +7,7 @@ const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
+// Handles post requests, eithr addDeck or addCard
 const handlePost = (request, response, parsedUrl) => {
   if (parsedUrl.pathname === '/addDeck') {
     const res = response;
@@ -51,19 +52,20 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
+// Calls the external Jisho API, which returns an array of results
 const jishoApiCall = (request, response, parsedUrl) => {
   const headers = {
     'Content-Type': 'application/json',
   };
 
-  const url = `https://jisho.org/api/v1/search/words?keyword=${parsedUrl.query}`;
-  const object = {};
+  const jishoUrl = `https://jisho.org/api/v1/search/words?keyword=${parsedUrl.query}`;
 
-  getJSON(url, (error, res) => {
+  getJSON(jishoUrl, (error, res) => {
     if (!error) {
       const object = {
         data: res.data,
       };
+      response.writeHead(200, headers);
       response.write(JSON.stringify(object));
       response.end();
     } else {
@@ -72,6 +74,7 @@ const jishoApiCall = (request, response, parsedUrl) => {
   });
 };
 
+// Get requests for HTML/CSS, search, decks, or cards(from decks)
 const handleGet = (request, response, parsedUrl) => {
   switch (request.method) {
     case 'GET':
@@ -99,8 +102,8 @@ const handleGet = (request, response, parsedUrl) => {
       }
       break;
     case 'HEAD':
-      if (parsedUrl.pathname === '/getUsers') {
-        jsonHandler.getUsersMeta(request, response);
+      if (parsedUrl.pathname === '/getDecks') {
+        jsonHandler.getDecksMeta(request, response);
       } else {
         jsonHandler.notFoundMeta(request, response);
       }
@@ -110,6 +113,7 @@ const handleGet = (request, response, parsedUrl) => {
   }
 };
 
+// Points the request to POST or GET/HEAD
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
 
