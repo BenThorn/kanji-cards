@@ -1,20 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Kanji Flashcards</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
   <script type="text/javascript" src="bundle.js"> </script>
 </head>
 <body>
-  <section id="top">
-    <h3>Kanji Cards</h3>
-    <form id="searchForm" action="/search" method="get">
-      <label for="search">Search: </label>
-      <input id="searchField" type="text" name="search" />
-      <input id="search" type="submit" value="Search" />
-    </form>
-  </section>
-  <section id="searchResults">
-  </section>
+  <div id="container">
+    <h3>Kanji Cards<span lang="jp">「日本語でオーケー」</span></h3>
+    <section id="top">
+      <div id="optionsDiv">
+        <form id="selectViewDeckForm">
+          <label id="deckLabel" for="newDeck">Deck: </label>
+          <select id="currentDeck" default="Select Deck">
+          </select>
+          <input id="getDecks" type="submit" value="View Deck" />
+        </form>
+        <form id="addDeckForm" action="/addDeck" method="post">
+          <label id="createLabel" for="newDeck">Name: </label>
+          <input id="deckName" type="text" name="deckName" />
+          <input id="create" type="submit" value="Create Deck" default="New deck name"/>
+          <p id="deckCount">0 cards in current deck</p>
+        </form>
+      </div>
+      <div id="searchDiv">
+        <form id="searchForm" action="/search" method="get">
+          <input id="searchField" type="text" name="search" />
+          <input id="search" type="submit" value="Search" />
+          <select id="searchType">
+            <option value="default" selected>Search language</option>
+            <option value="japanese">Japanese</option>
+            <option value="english">English</option>
+          </select>
+        </form>
+        <div id="searchResults">
+        </div>
+      </div>
+    </section>
+    <div id="deckList">
+    </div>
+  </div>
+
 </body>
 </html>

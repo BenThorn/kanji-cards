@@ -8,7 +8,7 @@ const jsonHandler = require('./jsonResponses.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const handlePost = (request, response, parsedUrl) => {
-  if (parsedUrl.pathname === '/addUser') {
+  if (parsedUrl.pathname === '/addDeck') {
     const res = response;
 
     const body = [];
@@ -26,7 +26,27 @@ const handlePost = (request, response, parsedUrl) => {
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString();
       const bodyParams = query.parse(bodyString);
-      jsonHandler.addUser(request, res, bodyParams);
+      jsonHandler.addDeck(request, res, bodyParams);
+    });
+  } else if (parsedUrl.pathname === '/addCard') {
+    const res = response;
+
+    const body = [];
+
+    request.on('error', (err) => {
+      console.dir(err);
+      res.statusCode = 400;
+      res.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString();
+      const bodyParams = query.parse(bodyString);
+      jsonHandler.addCard(request, res, bodyParams);
     });
   }
 };
@@ -35,39 +55,47 @@ const jishoApiCall = (request, response, parsedUrl) => {
   const headers = {
     'Content-Type': 'application/json',
   };
-  
-  const url = 'https://jisho.org/api/v1/search/words?keyword=' + parsedUrl.query;
-  let object = {};
+
+  const url = `https://jisho.org/api/v1/search/words?keyword=${parsedUrl.query}`;
+  const object = {};
 
   getJSON(url, (error, res) => {
-    if(!error){
+    if (!error) {
       const object = {
-        data: res.data
-      }
+        data: res.data,
+      };
       response.write(JSON.stringify(object));
       response.end();
     } else {
       console.log(error);
     }
   });
-  
 };
 
 const handleGet = (request, response, parsedUrl) => {
   switch (request.method) {
     case 'GET':
-      if (parsedUrl.pathname === '/') {
-        htmlHandler.getIndex(request, response);
-      } else if (parsedUrl.pathname === '/style.css') {
-        htmlHandler.getCSS(request, response);
-      } else if (parsedUrl.pathname === '/bundle.js') {
-        htmlHandler.getJS(request, response);
-      } else if (parsedUrl.pathname === '/getUsers') {
-        jsonHandler.getUsers(request, response);
-      } else if (parsedUrl.pathname === '/search') {
-        jishoApiCall(request, response, parsedUrl);
-      } else {
-        jsonHandler.notFound(request, response);
+      switch (parsedUrl.pathname) {
+        case '/':
+          htmlHandler.getIndex(request, response);
+          break;
+        case '/style.css':
+          htmlHandler.getCSS(request, response);
+          break;
+        case '/bundle.js':
+          htmlHandler.getJS(request, response);
+          break;
+        case '/search':
+          jishoApiCall(request, response, parsedUrl);
+          break;
+        case '/getDecks':
+          jsonHandler.getDecks(request, response);
+          break;
+        case '/getCards':
+          jsonHandler.getCards(request, response, parsedUrl.query);
+          break;
+        default:
+          jsonHandler.notFound(request, response);
       }
       break;
     case 'HEAD':
@@ -84,8 +112,6 @@ const handleGet = (request, response, parsedUrl) => {
 
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
-  // const params = query.parse(parsedUrl.query);
-  // const acceptedTypes = request.headers.accept.split(',');
 
   if (request.method === 'POST') {
     handlePost(request, response, parsedUrl);
