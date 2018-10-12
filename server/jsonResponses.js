@@ -85,7 +85,8 @@ const addDeck = (request, response, body) => {
   return respondJSON(request, response, responseCode);
 };
 
-// Unless it already has a card with the same identifier (kanji or kana depending), adds card to deck
+// Unless it already has a card with the same identifier 
+// (kanji or kana depending), adds card to deck
 const addCard = (request, response, params) => {
   const responseJSON = {
     message: 'Deck succesfully updated',
