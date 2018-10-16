@@ -310,7 +310,10 @@ var parseDeck = function parseDeck(xhr, deckOptions) {
 
       option.value = deckName;
       option.textContent = deckName;
-      option.id = deckName + 'Option';
+
+      var deckNameId = convertDeckName(deckName);
+
+      option.id = deckNameId + 'Option';
 
       deckOptions.appendChild(option);
 
@@ -318,6 +321,28 @@ var parseDeck = function parseDeck(xhr, deckOptions) {
       document.querySelector("#" + option.id).selected = true;
     }
   }
+};
+
+// Helper method to check if there are spaces in the deck name
+// Adds underscores so it will work as an ID
+var convertDeckName = function convertDeckName(deckName) {
+  var deckNameArr = deckName.split(" ");
+
+  var deckNameId = void 0;
+
+  if (deckNameArr.length > 1) {
+    for (var i = 0; i < deckNameArr.length; i++) {
+      deckNameId += deckNameArr[i];
+
+      if (i !== deckNameArr.length - 1) {
+        deckNameId += "_";
+      }
+    }
+  } else {
+    deckNameId = deckName;
+  }
+
+  return deckNameId;
 };
 
 // ---- API Requests ----
@@ -358,7 +383,11 @@ var requestAddDeck = function requestAddDeck(e, nameForm) {
 
   var formData = "name=" + nameField.value;
 
-  xhr.send(formData);
+  if (/^[a-zA-Z0-9- ,_]*$/.test(nameField.value) === false) {
+    alert("Please do not use special characters in your deck's name.");
+  } else {
+    xhr.send(formData);
+  }
 
   e.preventDefault();
 
@@ -421,7 +450,8 @@ var requestSearch = function requestSearch(e, searchForm) {
 };
 
 var requestCards = function requestCards(e, deckOption) {
-  var id = deckOption;
+  // Encode in case there are spaces in the name
+  var id = encodeURIComponent(deckOption);
 
   var url = "/getCards?" + id;
   var method = 'get';

@@ -48,8 +48,10 @@ const getDecks = (request, response) => {
 
 // Grabs the cards array from a given deck object
 const getCards = (request, response, id) => {
+  // Decode in case there were spaces in the name
+  const decodedId = decodeURIComponent(id);
   const responseJSON = {
-    cards: decks[id].cards,
+    cards: decks[decodedId].cards,
   };
 
   respondJSON(request, response, 200, responseJSON);
@@ -85,7 +87,7 @@ const addDeck = (request, response, body) => {
   return respondJSON(request, response, responseCode);
 };
 
-// Unless it already has a card with the same identifier 
+// Unless it already has a card with the same identifier
 // (kanji or kana depending), adds card to deck
 const addCard = (request, response, params) => {
   const responseJSON = {

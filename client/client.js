@@ -299,7 +299,10 @@ const parseDeck = (xhr, deckOptions) => {
           
       option.value = deckName;
       option.textContent = deckName;
-      option.id = deckName + 'Option';
+
+      const deckNameId = convertDeckName(deckName);
+
+      option.id = deckNameId + 'Option';
 
       deckOptions.appendChild(option);
 
@@ -308,6 +311,28 @@ const parseDeck = (xhr, deckOptions) => {
     }
     
   }
+};
+
+// Helper method to check if there are spaces in the deck name
+// Adds underscores so it will work as an ID
+const convertDeckName = (deckName) => {
+  const deckNameArr = deckName.split(" ");
+
+  let deckNameId;
+
+  if (deckNameArr.length > 1) {
+    for(let i = 0; i < deckNameArr.length; i++) {
+      deckNameId += deckNameArr[i];
+
+      if (i !== deckNameArr.length-1) {
+        deckNameId += "_";
+      }
+    }
+  } else {
+    deckNameId = deckName;
+  }
+
+  return deckNameId;
 };
 
 // ---- API Requests ----
@@ -343,8 +368,12 @@ const requestAddDeck = (e, nameForm) => {
   xhr.onload = () => handleAddDeck(xhr);
 
   const formData = `name=${nameField.value}`;
-  
-  xhr.send(formData);
+
+  if (/^[a-zA-Z0-9- ,_]*$/.test(nameField.value) === false) {
+    alert("Please do not use special characters in your deck's name.");
+  } else {
+    xhr.send(formData);
+  }
 
   e.preventDefault();
 
@@ -403,7 +432,8 @@ const requestSearch = (e, searchForm) => {
 };
 
 const requestCards = (e, deckOption) => {
-  const id = deckOption;
+  // Encode in case there are spaces in the name
+  const id = encodeURIComponent(deckOption);
 
   const url = `/getCards?${id}`;
   const method = 'get';
